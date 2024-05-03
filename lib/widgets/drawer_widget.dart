@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:news_app_flutter_course/inner_screens/bookmarks_screen.dart';
 import 'package:news_app_flutter_course/providers/theme_provider.dart';
 import 'package:news_app_flutter_course/services/utils.dart';
 import 'package:news_app_flutter_course/widgets/vertical_spacing.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 
 class DrawerWidget extends StatefulWidget {
@@ -53,7 +55,14 @@ class _DrawerWidgetState extends State<DrawerWidget> {
             ListTilesWidget(
               label: "Bookmark",
               icon: IconlyBold.bookmark,
-              fct: () {},
+              fct: () {Navigator.push(
+                  context,
+                  PageTransition(
+                      type: PageTransitionType.rightToLeft,
+                      child: const BookmarkScreen(),
+                      inheritTheme: true,
+                      ctx: context),
+                );},
             ),
             const Divider(
               thickness: 5,

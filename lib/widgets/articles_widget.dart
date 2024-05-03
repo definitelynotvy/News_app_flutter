@@ -1,11 +1,15 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
-import 'package:news_app_flutter_course/consts/vars.dart';
+import 'package:news_app_flutter_course/inner_screens/news_details_webview.dart';
 import 'package:news_app_flutter_course/services/utils.dart';
 import 'package:news_app_flutter_course/widgets/vertical_spacing.dart';
+import 'package:page_transition/page_transition.dart';
+
+import '../consts/styles.dart';
+import '../inner_screens/blog_details.dart';
+
 class ArticlesWidget extends StatelessWidget {
-  const ArticlesWidget({super.key});
+  const ArticlesWidget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -14,8 +18,11 @@ class ArticlesWidget extends StatelessWidget {
       padding: const EdgeInsets.all(8.0),
       child: Material(
         color: Theme.of(context).cardColor,
-        child: InkWell(
-          onTap: () {},
+        child: GestureDetector(
+          onTap: () {
+            // Navigate to the in app details screen
+            Navigator.pushNamed(context, NewsDetailsScreen.routeName);
+          },
           child: Stack(
             children: [
               Container(
@@ -41,11 +48,14 @@ class ArticlesWidget extends StatelessWidget {
                     ClipRRect(
                       borderRadius: BorderRadius.circular(10),
                       child: FancyShimmerImage(
-                          height: size.height * 0.12,
-                          width: size.height * 0.12,
-                          boxFit: BoxFit.fill,
-                          imageUrl:
-                              "https://techcrunch.com/wp-content/uploads/2022/01/locket-app.jpg?w=1390&crop=1"),
+                        height: size.height * 0.12,
+                        width: size.height * 0.12,
+                        boxFit: BoxFit.fill,
+                        errorWidget:
+                            Image.asset('assets/images/empty_image.png'),
+                        imageUrl:
+                            "https://techcrunch.com/wp-content/uploads/2022/01/locket-app.jpg?w=1390&crop=1",
+                      ),
                     ),
                     const SizedBox(
                       width: 10,
@@ -56,7 +66,7 @@ class ArticlesWidget extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Text(
-                            'Title'*20,
+                            'title ' * 100,
                             textAlign: TextAlign.justify,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
@@ -74,21 +84,32 @@ class ArticlesWidget extends StatelessWidget {
                             child: Row(
                               children: [
                                 IconButton(
-                                    onPressed: () {},
-                                    icon: const Icon(
-                                      Icons.link,
-                                      color: Colors.blue,
-                                    )
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      PageTransition(
+                                          type: PageTransitionType.rightToLeft,
+                                          child: const NewsDetailsWebView(),
+                                          inheritTheme: true,
+                                          ctx: context),
+                                    );
+                                  },
+                                  icon: const Icon(
+                                    Icons.link,
+                                    color: Colors.blue,
+                                  ),
                                 ),
                                 Text(
-                                  '20-2-2020'*2,
+                                  '20-2-2020 ' * 2,
                                   maxLines: 1,
                                   style: smallTextStyle,
-                                )
+                                ),
                               ],
                             ),
                           )
-                        ],))
+                        ],
+                      ),
+                    )
                   ],
                 ),
               ),
