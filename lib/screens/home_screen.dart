@@ -11,17 +11,19 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:news_app_flutter_course/consts/vars.dart';
 import 'package:news_app_flutter_course/inner_screens/search_screen.dart';
 import 'package:news_app_flutter_course/models/news_model.dart';
+import 'package:news_app_flutter_course/providers/news_provider.dart';
 import 'package:news_app_flutter_course/services/news_api.dart';
 import 'package:news_app_flutter_course/services/utils.dart';
 import 'package:news_app_flutter_course/widgets/articles_widget.dart';
 import 'package:news_app_flutter_course/widgets/drawer_widget.dart';
 import 'package:news_app_flutter_course/widgets/empty_screen.dart';
 import 'package:news_app_flutter_course/widgets/loading_widget.dart';
-import 'package:news_app_flutter_course/widgets/top_trending.dart';
+import 'package:news_app_flutter_course/widgets/top_tending.dart';
 import 'package:news_app_flutter_course/widgets/vertical_spacing.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 
+import '../providers/news_provider.dart';
 import '../providers/theme_provider.dart';
 import '../widgets/tabs.dart';
 import 'package:http/http.dart' as http;
@@ -54,6 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     Size size = Utils(context).getScreenSize;
     final Color color = Utils(context).getColor;
+    final newsProvider = Provider.of<NewsProvider>(context);
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -195,12 +198,19 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: DropdownButton(
                             value: sortBy,
                             items: dropDownItems,
-                            onChanged: (String? value) {}),
+                            onChanged: (String? value) {
+                              setState(() {
+                                sortBy = value!;
+                              });
+                            }),
                       ),
                     ),
                   ),
                   FutureBuilder<List<NewsModel>>(
-                future: NewsAPiServices.getAllNews(),
+                future: newsType == NewsType.topTrending
+                    ?newsProvider.fetchTopHeadlines()
+                    :newsProvider.fetchAllNews( 
+                    pageIndex: currentPageIndex + 1,sortBy: sortBy),
                 builder: ((context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return newsType == NewsType.allNews
@@ -228,12 +238,15 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: ListView.builder(
                               itemCount: snapshot.data!.length,
                               itemBuilder: (ctx, index) {
-                                return ArticlesWidget(
-                                  imageUrl: snapshot.data![index].urlToImage,
-                                  dateToShow: snapshot.data![index].dateToShow,
-                                  readingTime: snapshot.data![index].readingTimeText,                             
-                                  title: snapshot.data![index].title,
-                                  url: snapshot.data![index].url,
+                                return ChangeNotifierProvider.value(
+                                  value: snapshot.data![index],
+                                  child: const ArticlesWidget(
+                                    // imageUrl: snapshot.data![index].urlToImage,
+                                    // dateToShow: snapshot.data![index].dateToShow,
+                                    // readingTime: snapshot.data![index].readingTimeText,                             
+                                    // title: snapshot.data![index].title,
+                                    // url: snapshot.data![index].url,
+                                  ),
                                 );
                               }),
                         )
@@ -247,8 +260,11 @@ class _HomeScreenState extends State<HomeScreen> {
                             viewportFraction: 0.9,
                             itemCount: 5,
                             itemBuilder: (context, index) {
-                              return TopTrendingWidget(
-                                url: snapshot.data![index].url,
+                              return ChangeNotifierProvider.value(
+                                  value: snapshot.data![index],
+                                  child: TopTrendingWidget(
+                                  // url: snapshot.data![index].url,
+                                ),
                               );
                             },
                           ),
