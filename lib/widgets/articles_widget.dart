@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:news_app_flutter_course/inner_screens/news_details_webview.dart';
+import 'package:news_app_flutter_course/models/bookmarks_model.dart';
 import 'package:news_app_flutter_course/models/news_model.dart';
 import 'package:news_app_flutter_course/services/utils.dart';
 import 'package:news_app_flutter_course/widgets/vertical_spacing.dart';
@@ -11,12 +12,15 @@ import '../consts/styles.dart';
 import '../inner_screens/blog_details.dart';
 
 class ArticlesWidget extends StatelessWidget {
-  const ArticlesWidget({Key? key,}) : super(key: key);
-  //final String imageUrl, title, url, dateToShow, readingTime ;
+  const ArticlesWidget({Key? key, this.isBookmark = false}) : super(key: key);
+  // final String imageUrl, title, url, dateToShow, readingTime;
+  final bool isBookmark;
   @override
   Widget build(BuildContext context) {
     Size size = Utils(context).getScreenSize;
-    final newsModelProvider = Provider.of<NewsModel>(context);
+    dynamic newsModelProvider = isBookmark
+        ? Provider.of<BookmarksModel>(context)
+        : Provider.of<NewsModel>(context);
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Material(

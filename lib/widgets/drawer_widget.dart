@@ -4,6 +4,7 @@ import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:news_app_flutter_course/inner_screens/bookmarks_screen.dart';
 import 'package:news_app_flutter_course/providers/theme_provider.dart';
+import 'package:news_app_flutter_course/screens/home_screen.dart';
 import 'package:news_app_flutter_course/services/utils.dart';
 import 'package:news_app_flutter_course/widgets/vertical_spacing.dart';
 import 'package:page_transition/page_transition.dart';
@@ -50,19 +51,30 @@ class _DrawerWidgetState extends State<DrawerWidget> {
             ListTilesWidget(
               label: "Home",
               icon: IconlyBold.home,
-              fct: () {},
+              fct: () {
+                Navigator.pushReplacement(
+                  context,
+                  PageTransition(
+                      type: PageTransitionType.rightToLeft,
+                      child: const HomeScreen(),
+                      inheritTheme: true,
+                      ctx: context),
+                );
+              },
             ),
             ListTilesWidget(
               label: "Bookmark",
               icon: IconlyBold.bookmark,
-              fct: () {Navigator.push(
+              fct: () {
+                Navigator.pushReplacement(
                   context,
                   PageTransition(
                       type: PageTransitionType.rightToLeft,
                       child: const BookmarkScreen(),
                       inheritTheme: true,
                       ctx: context),
-                );},
+                );
+              },
             ),
             const Divider(
               thickness: 5,

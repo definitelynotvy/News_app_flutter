@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:news_app_flutter_course/consts/http_exceptions.dart';
+import 'package:news_app_flutter_course/models/bookmarks_model.dart';
 import 'package:news_app_flutter_course/models/news_model.dart';
 
 import 'package:http/http.dart' as http;
@@ -83,7 +84,7 @@ class NewsAPiServices {
       var uri = Uri.https(BASEURL, "v2/everything", {
         "q": query,
         "pageSize": "10",
-       "domains": "techcrunch.com",
+      //  "domains": "techcrunch.com",
       });
       var response = await http.get(
         uri,
@@ -109,4 +110,31 @@ class NewsAPiServices {
       throw error.toString();
     }
   }
+
+  static Future<List<BookmarksModel>?> getBookmarks() async {
+    try {
+      var uri = Uri.https(BASEURL_FIREBASE, "bookmarks.json");
+      var response = await http.get(
+        uri,
+      );
+      // log('Response status: ${response.statusCode}');
+      // log('Response body: ${response.body}');
+
+      Map data = jsonDecode(response.body);
+      List allKeys = [];
+
+      if (data['code'] != null) {
+        throw HttpException(data['code']);
+        // throw data['message'];
+      }
+      for (String key in data.keys) {
+        allKeys.add(key);
+      }
+      log("allKeys $allKeys");
+      return BookmarksModel.bookmarksFromSnapshot(json: data, allKeys: allKeys);
+    } catch (error) {
+      rethrow;
+    }
+  }
+
 }
